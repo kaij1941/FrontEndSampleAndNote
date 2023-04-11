@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vue拖曳換行示範</title>
+  <style>
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border: 1px solid #ccc;
+    }
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    .dragging {
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <ul>
+      <li v-for="(item, index) in items" :key="item.id" :class="{dragging: index === dragging}" draggable="true"
+          @dragstart="dragStart(index)" @dragend="dragEnd" @dragover.prevent @drop="drop(index)">
+        {{ item.text }}
+      </li>
+    </ul>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+	    //用來暫存 拖曳時的元素
+        dragging: null,
+		//表現拖曳的物件陣列
+        items: [
+          { id: 1, text: '第一行' },
+          { id: 2, text: '第二行' },
+          { id: 3, text: '第三行' },
+          { id: 4, text: '第四行' },
+          { id: 5, text: '第五行' }
+        ]
+      },
+      methods: {
+		//拖曳起始點 暫時紀錄 序號
+        dragStart(index) {
+          this.dragging = index;
+        },
+		//拖曳結束 清空暫時的紀錄
+        dragEnd() {
+          this.dragging = null;
+        },
+		//拖曳到結束前 的 執行行為(大致賞就是利用替換陣列中的元素的概念)
+        drop(index) {
+          const draggingItem = this.items[this.dragging];
+          this.items.splice(this.dragging, 1);
+          this.items.splice(index, 0, draggingItem);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
